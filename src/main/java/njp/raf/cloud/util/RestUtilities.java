@@ -13,7 +13,7 @@ public class RestUtilities {
 
     private RestUtilities() {}
 
-    public static ResponseEntity<Map<String, String>> createErrorMap(BindingResult bindingResult) {
+    public static ResponseEntity<Map<String, String>> createErrorResponse(BindingResult bindingResult) {
         Map<String, String> errorMap = bindingResult.getFieldErrors()
                 .stream()
                 .collect(toMap(FieldError::getField, RestUtilities::getErrorMessage, (a, b) -> b));

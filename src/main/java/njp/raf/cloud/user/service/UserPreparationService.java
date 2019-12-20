@@ -10,13 +10,13 @@ import org.springframework.stereotype.Service;
 import java.util.regex.Pattern;
 
 @Service
-public class UserPreparationService {
+class UserPreparationService {
 
     private static final Pattern BCRYPT_PATTERN = Pattern.compile("^\\$2[ayb]\\$.{56}$");
 
     private final UserRepository userRepository;
 
-    public UserPreparationService(UserRepository userRepository) {
+    UserPreparationService(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
 

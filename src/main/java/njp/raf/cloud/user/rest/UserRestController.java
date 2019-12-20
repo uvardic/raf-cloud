@@ -1,6 +1,9 @@
 package njp.raf.cloud.user.rest;
 
+import njp.raf.cloud.annotation.AuthorizationRole;
+import njp.raf.cloud.user.domain.TokenRequest;
 import njp.raf.cloud.user.domain.User;
+import njp.raf.cloud.user.domain.UserRole;
 import njp.raf.cloud.user.service.UserService;
 import njp.raf.cloud.util.RestUtilities;
 import org.springframework.http.HttpStatus;
@@ -12,6 +15,7 @@ import javax.validation.Valid;
 import java.util.List;
 
 @RestController
+@SuppressWarnings("unused")
 @RequestMapping("/cloud/user")
 public class UserRestController {
 
@@ -22,7 +26,10 @@ public class UserRestController {
     }
 
     @DeleteMapping("/delete/id={id}")
-    public ResponseEntity<?> delete(@PathVariable Long id) {
+    @AuthorizationRole(roles = {UserRole.ADMIN, UserRole.USER})
+    public ResponseEntity<?> delete(
+            @PathVariable Long id, @RequestHeader("Authorization") String authorizationHeader
+    ) {
         userService.deleteById(id);
 
         return new ResponseEntity<>(HttpStatus.OK);
@@ -31,34 +38,51 @@ public class UserRestController {
     @PostMapping("/save")
     public ResponseEntity<?> save(@Valid @RequestBody User user, BindingResult bindingResult) {
         if (bindingResult.hasErrors())
-            return RestUtilities.createErrorMap(bindingResult);
+            return RestUtilities.createErrorResponse(bindingResult);
 
         return new ResponseEntity<>(userService.save(user), HttpStatus.CREATED);
     }
 
     @PutMapping("/update/existingId={existingId}")
+    @AuthorizationRole(roles = {UserRole.ADMIN, UserRole.USER})
     public ResponseEntity<?> update(
-            @PathVariable Long existingId, @Valid @RequestBody User user, BindingResult bindingResult
+            @PathVariable Long existingId, @Valid @RequestBody User user,
+            @RequestHeader("Authorization") String authorizationHeader, BindingResult bindingResult
     ) {
         if (bindingResult.hasErrors())
-            return RestUtilities.createErrorMap(bindingResult);
+            return RestUtilities.createErrorResponse(bindingResult);
 
         return new ResponseEntity<>(userService.update(existingId, user), HttpStatus.OK);
     }
 
     @GetMapping("/id={id}")
-    public ResponseEntity<User> findById(@PathVariable Long id) {
+    @AuthorizationRole(roles = {UserRole.ADMIN})
+    public ResponseEntity<User> findById(
+            @PathVariable Long id, @RequestHeader("Authorization") String authorizationHeader
+    ) {
         return new ResponseEntity<>(userService.findById(id), HttpStatus.OK);
     }
 
     @GetMapping("/username={username}")
-    public ResponseEntity<User> findByUsername(@PathVariable String username) {
+    @AuthorizationRole(roles = {UserRole.ADMIN})
+    public ResponseEntity<User> findByUsername(
+            @PathVariable String username, @RequestHeader("Authorization") String authorizationHeader
+    ) {
         return new ResponseEntity<>(userService.findByUsername(username), HttpStatus.OK);
     }
 
     @GetMapping("/all")
-    public ResponseEntity<List<User>> findAll() {
+    @AuthorizationRole(roles = {UserRole.ADMIN})
+    public ResponseEntity<List<User>> findAll(@RequestHeader("Authorization") String authorizationHeader) {
         return new ResponseEntity<>(userService.findAll(), HttpStatus.OK);
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<?> login(@Valid @RequestBody TokenRequest tokenRequest, BindingResult bindingResult) {
+        if (bindingResult.hasErrors())
+            return RestUtilities.createErrorResponse(bindingResult);
+
+        return new ResponseEntity<>(userService.login(tokenRequest), HttpStatus.OK);
     }
 
 }

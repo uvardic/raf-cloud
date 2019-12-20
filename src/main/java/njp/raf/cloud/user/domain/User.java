@@ -23,8 +23,12 @@ public class User {
     @Size(min = 5, max = 100)
     private String username;
 
-    @NotNull
+    @NotBlank
     private String password;
+
+    @NotNull
+    @Enumerated(EnumType.STRING)
+    private UserRole role;
 
     @Size(min = 2, max = 100)
     private String firstName;
