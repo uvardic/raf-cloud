@@ -20,7 +20,7 @@ public class User {
     @Email
     @NotBlank
     @Column(unique = true)
-    @Size(min = MIN_USERNAME_SIZE, max = MAX_USERNAME_SIZE)
+    @Size(min = 5, max = 100)
     private String username;
 
     @NotNull
