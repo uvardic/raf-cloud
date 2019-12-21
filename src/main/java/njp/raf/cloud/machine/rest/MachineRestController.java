@@ -2,6 +2,7 @@ package njp.raf.cloud.machine.rest;
 
 import njp.raf.cloud.annotation.AuthorizationRole;
 import njp.raf.cloud.machine.domain.Machine;
+import njp.raf.cloud.machine.domain.MachineSearchRequest;
 import njp.raf.cloud.machine.service.MachineService;
 import njp.raf.cloud.user.domain.UserRole;
 import org.springframework.http.HttpStatus;
@@ -62,6 +63,42 @@ public class MachineRestController {
     @AuthorizationRole(roles = {UserRole.ADMIN, UserRole.USER})
     public ResponseEntity<List<Machine>> findAll(@RequestHeader("authorization") String authorizationHeader) {
         return new ResponseEntity<>(machineService.findAll(), HttpStatus.OK);
+    }
+
+    @GetMapping("/allByOwner")
+    @AuthorizationRole(roles = {UserRole.ADMIN, UserRole.USER})
+    public ResponseEntity<List<Machine>> findAllByOwner(
+            @RequestBody MachineSearchRequest machineSearchRequest,
+            @RequestHeader("authorization") String authorizationHeader
+    ) {
+        return new ResponseEntity<>(machineService.findAllByOwner(machineSearchRequest), HttpStatus.OK);
+    }
+
+    @GetMapping("/allByOwnerAndName")
+    @AuthorizationRole(roles = {UserRole.ADMIN, UserRole.USER})
+    public ResponseEntity<List<Machine>> findAllByOwnerAndName(
+            @RequestBody MachineSearchRequest machineSearchRequest,
+            @RequestHeader("authorization") String authorizationHeader
+    ) {
+        return new ResponseEntity<>(machineService.findAllByOwnerAndName(machineSearchRequest), HttpStatus.OK);
+    }
+
+    @GetMapping("/allByOwnerAndStatusIn")
+    @AuthorizationRole(roles = {UserRole.ADMIN, UserRole.USER})
+    public ResponseEntity<List<Machine>> findAllByOwnerAndStatusIn(
+            @RequestBody MachineSearchRequest machineSearchRequest,
+            @RequestHeader("authorization") String authorizationHeader
+    ) {
+        return new ResponseEntity<>(machineService.findAllByOwnerAndStatusIn(machineSearchRequest), HttpStatus.OK);
+    }
+
+    @GetMapping("/allByOwnerAndBetweenDate")
+    @AuthorizationRole(roles = {UserRole.ADMIN, UserRole.USER})
+    public ResponseEntity<List<Machine>> findAllByOwnerAndBetweenDate(
+            @RequestBody MachineSearchRequest machineSearchRequest,
+            @RequestHeader("authorization") String authorizationHeader
+    ) {
+        return new ResponseEntity<>(machineService.findAllByOwnerAndBetweenDate(machineSearchRequest), HttpStatus.OK);
     }
 
 }

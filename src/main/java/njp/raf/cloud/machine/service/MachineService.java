@@ -1,7 +1,9 @@
 package njp.raf.cloud.machine.service;
 
+import njp.raf.cloud.exception.machine.InvalidMachineSearchRequestException;
 import njp.raf.cloud.exception.machine.MachineNotFoundException;
 import njp.raf.cloud.machine.domain.Machine;
+import njp.raf.cloud.machine.domain.MachineSearchRequest;
 import njp.raf.cloud.machine.repository.MachineRepository;
 import org.springframework.stereotype.Service;
 
@@ -44,6 +46,49 @@ public class MachineService {
 
     public List<Machine> findAll() {
         return machineRepository.findAll();
+    }
+
+    public List<Machine> findAllByOwner(MachineSearchRequest machineSearchRequest) {
+        if (machineSearchRequest.getOwnerId() == null)
+            throw new InvalidMachineSearchRequestException("Owner id not defined!");
+
+        return machineRepository.findAllByOwner(machineSearchRequest.getOwnerId());
+    }
+
+    public List<Machine> findAllByOwnerAndName(MachineSearchRequest machineSearchRequest) {
+        if (machineSearchRequest.getOwnerId() == null)
+            throw new InvalidMachineSearchRequestException("Owner id not defined!");
+
+        if (machineSearchRequest.getName() == null)
+            throw new InvalidMachineSearchRequestException("Name not defined!");
+
+        return machineRepository.findAllByOwnerAndName(
+                machineSearchRequest.getOwnerId(), machineSearchRequest.getName()
+        );
+    }
+
+    public List<Machine> findAllByOwnerAndStatusIn(MachineSearchRequest machineSearchRequest) {
+        if (machineSearchRequest.getOwnerId() == null)
+            throw new InvalidMachineSearchRequestException("Owner id not defined!");
+
+        if (machineSearchRequest.getStatuses() == null)
+            throw new InvalidMachineSearchRequestException("Statuses not defined!");
+
+        return machineRepository.findAllByOwnerAndStatusIn(
+                machineSearchRequest.getOwnerId(), machineSearchRequest.getStatuses()
+        );
+    }
+
+    public List<Machine> findAllByOwnerAndBetweenDate(MachineSearchRequest machineSearchRequest) {
+        if (machineSearchRequest.getOwnerId() == null)
+            throw new InvalidMachineSearchRequestException("Owner id not defined!");
+
+        if (machineSearchRequest.getDate() == null)
+            throw new InvalidMachineSearchRequestException("Date not defined!");
+
+        return machineRepository.findAllByOwnerAndBetweenDate(
+                machineSearchRequest.getOwnerId(), machineSearchRequest.getDateAsObject()
+        );
     }
 
 }

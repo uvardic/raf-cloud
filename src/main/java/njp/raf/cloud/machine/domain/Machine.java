@@ -52,7 +52,7 @@ public class Machine implements Serializable {
     private boolean active;
 
     @JsonIgnore
-    private transient final SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
+    public static transient final SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
 
     public String getDateFrom() {
         if (dateFrom == null)
