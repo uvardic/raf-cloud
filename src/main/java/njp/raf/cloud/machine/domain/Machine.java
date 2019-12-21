@@ -75,7 +75,7 @@ public class Machine implements Serializable {
 
     public String getDateTo() {
         if (dateTo == null)
-            return "00-00-0000";
+            return null;
 
         return dateFormat.format(dateTo);
     }
