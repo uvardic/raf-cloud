@@ -30,6 +30,7 @@ class MachinePreparationService {
                 ));
 
         machine.setActive(false);
+        machine.setDateToToCurrentDate();
 
         return machine;
     }
@@ -38,6 +39,7 @@ class MachinePreparationService {
         machineRequest.setUuid(generateUuid());
         machineRequest.setStatus(MachineStatus.STOPPED);
         machineRequest.setOwner(findOwner(ownerId));
+        machineRequest.setDateFromToCurrentDate();
         machineRequest.setActive(true);
 
         return machineRequest;
