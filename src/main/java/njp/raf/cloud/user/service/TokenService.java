@@ -3,7 +3,7 @@ package njp.raf.cloud.user.service;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
-import njp.raf.cloud.exception.TokenParsingException;
+import njp.raf.cloud.exception.user.TokenParsingException;
 import njp.raf.cloud.user.domain.TokenResponse;
 import njp.raf.cloud.user.domain.User;
 import org.aspectj.lang.ProceedingJoinPoint;
@@ -14,7 +14,7 @@ import org.springframework.stereotype.Service;
 import java.util.Arrays;
 
 @Service
-@PropertySource(value = "security.properties")
+@PropertySource(value = "/security.properties")
 public class TokenService {
 
     private final String tokenSecret;

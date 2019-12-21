@@ -1,6 +1,8 @@
 package njp.raf.cloud.exception.handler;
 
-import njp.raf.cloud.exception.*;
+import njp.raf.cloud.exception.machine.InvalidMachineInfoException;
+import njp.raf.cloud.exception.machine.MachineNotFoundException;
+import njp.raf.cloud.exception.user.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -8,6 +10,16 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 
 @ControllerAdvice
 public class RestExceptionHandler {
+
+    @ExceptionHandler(value = {InvalidMachineInfoException.class})
+    public ResponseEntity<ExceptionResponse> handleInvalidMachineInfoException(InvalidMachineInfoException ex) {
+        return new ResponseEntity<>(new ExceptionResponse(ex), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(value = {MachineNotFoundException.class})
+    public ResponseEntity<ExceptionResponse> handleMachineNotFoundException(MachineNotFoundException ex) {
+        return new ResponseEntity<>(new ExceptionResponse(ex), HttpStatus.NOT_FOUND);
+    }
 
     @ExceptionHandler(value = {InvalidUserInfoException.class})
     public ResponseEntity<ExceptionResponse> handleInvalidUserInfoException(InvalidUserInfoException ex) {

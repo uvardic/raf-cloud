@@ -1,7 +1,7 @@
 package njp.raf.cloud.configuration;
 
 import njp.raf.cloud.annotation.AuthorizationRole;
-import njp.raf.cloud.exception.UserForbiddenException;
+import njp.raf.cloud.exception.user.UserForbiddenException;
 import njp.raf.cloud.user.domain.UserRole;
 import njp.raf.cloud.user.service.TokenService;
 import org.aspectj.lang.ProceedingJoinPoint;

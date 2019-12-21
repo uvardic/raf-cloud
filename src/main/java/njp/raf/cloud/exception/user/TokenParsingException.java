@@ -1,4 +1,4 @@
-package njp.raf.cloud.exception;
+package njp.raf.cloud.exception.user;
 
 public class TokenParsingException extends RuntimeException {
 

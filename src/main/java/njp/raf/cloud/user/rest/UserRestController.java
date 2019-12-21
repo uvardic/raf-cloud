@@ -5,10 +5,8 @@ import njp.raf.cloud.user.domain.TokenRequest;
 import njp.raf.cloud.user.domain.User;
 import njp.raf.cloud.user.domain.UserRole;
 import njp.raf.cloud.user.service.UserService;
-import njp.raf.cloud.util.RestUtilities;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -25,33 +23,27 @@ public class UserRestController {
         this.userService = userService;
     }
 
-    @DeleteMapping("/delete/id={id}")
+    @DeleteMapping("/delete/existingId={existingId}")
     @AuthorizationRole(roles = {UserRole.ADMIN, UserRole.USER})
     public ResponseEntity<?> delete(
-            @PathVariable Long id, @RequestHeader("Authorization") String authorizationHeader
+            @PathVariable Long existingId, @RequestHeader("Authorization") String authorizationHeader
     ) {
-        userService.deleteById(id);
+        userService.deleteById(existingId);
 
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @PostMapping("/save")
-    public ResponseEntity<?> save(@Valid @RequestBody User user, BindingResult bindingResult) {
-        if (bindingResult.hasErrors())
-            return RestUtilities.createErrorResponse(bindingResult);
-
-        return new ResponseEntity<>(userService.save(user), HttpStatus.CREATED);
+    public ResponseEntity<?> save(@Valid @RequestBody User userRequest) {
+        return new ResponseEntity<>(userService.save(userRequest), HttpStatus.CREATED);
     }
 
     @PutMapping("/update/existingId={existingId}")
     @AuthorizationRole(roles = {UserRole.ADMIN, UserRole.USER})
     public ResponseEntity<?> update(
             @PathVariable Long existingId, @Valid @RequestBody User user,
-            @RequestHeader("Authorization") String authorizationHeader, BindingResult bindingResult
+            @RequestHeader("Authorization") String authorizationHeader
     ) {
-        if (bindingResult.hasErrors())
-            return RestUtilities.createErrorResponse(bindingResult);
-
         return new ResponseEntity<>(userService.update(existingId, user), HttpStatus.OK);
     }
 
@@ -78,10 +70,7 @@ public class UserRestController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@Valid @RequestBody TokenRequest tokenRequest, BindingResult bindingResult) {
-        if (bindingResult.hasErrors())
-            return RestUtilities.createErrorResponse(bindingResult);
-
+    public ResponseEntity<?> login(@Valid @RequestBody TokenRequest tokenRequest) {
         return new ResponseEntity<>(userService.login(tokenRequest), HttpStatus.OK);
     }
 

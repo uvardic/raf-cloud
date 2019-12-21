@@ -1,7 +1,7 @@
 package njp.raf.cloud.user.service;
 
-import njp.raf.cloud.exception.UserAuthenticationException;
-import njp.raf.cloud.exception.UserNotFoundException;
+import njp.raf.cloud.exception.user.UserAuthenticationException;
+import njp.raf.cloud.exception.user.UserNotFoundException;
 import njp.raf.cloud.user.domain.TokenRequest;
 import njp.raf.cloud.user.domain.TokenResponse;
 import njp.raf.cloud.user.domain.User;
@@ -30,18 +30,18 @@ public class UserService {
     }
 
     @Transactional
-    public void deleteById(Long id) {
-        userRepository.deleteById(userPreparationService.prepareUserForDelete(id));
+    public void deleteById(Long existingId) {
+        userRepository.deleteById(userPreparationService.prepareUserForDelete(existingId));
     }
 
     @Transactional
-    public User save(User user) {
-        return userRepository.save(userPreparationService.prepareUserForSave(user));
+    public User save(User userRequest) {
+        return userRepository.save(userPreparationService.prepareUserForSave(userRequest));
     }
 
     @Transactional
-    public User update(Long existingId, User user) {
-        return userRepository.save(userPreparationService.prepareUserForUpdate(existingId, user));
+    public User update(Long existingId, User userRequest) {
+        return userRepository.save(userPreparationService.prepareUserForUpdate(existingId, userRequest));
     }
 
     public User findById(Long id) {

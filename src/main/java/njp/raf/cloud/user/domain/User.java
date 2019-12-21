@@ -1,29 +1,36 @@
 package njp.raf.cloud.user.domain;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import lombok.Data;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
-import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.io.Serializable;
 
 @Data
 @Entity
 @Table(name = "user")
-public class User {
+@JsonIdentityInfo(
+        generator = ObjectIdGenerators.PropertyGenerator.class,
+        property = "id"
+)
+public class User implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Email
-    @NotBlank
-    @Column(unique = true)
+    @NotNull
     @Size(min = 5, max = 100)
+    @Column(unique = true)
     private String username;
 
-    @NotBlank
+    @NotNull
+    @Size(min = 6, max = 255)
     private String password;
 
     @NotNull

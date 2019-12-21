@@ -1,7 +1,7 @@
 package njp.raf.cloud.user.service;
 
-import njp.raf.cloud.exception.InvalidUserInfoException;
-import njp.raf.cloud.exception.UserNotFoundException;
+import njp.raf.cloud.exception.user.InvalidUserInfoException;
+import njp.raf.cloud.exception.user.UserNotFoundException;
 import njp.raf.cloud.user.domain.User;
 import njp.raf.cloud.user.repository.UserRepository;
 import org.springframework.security.crypto.bcrypt.BCrypt;
@@ -31,34 +31,41 @@ class UserPreparationService {
         return userRepository.findById(id).isEmpty();
     }
 
-    public User prepareUserForSave(User user) {
-        if (usernameExists(user.getUsername()))
-            throw new InvalidUserInfoException(String.format("Username: %s, already exists!", user.getUsername()));
+    public User prepareUserForSave(User userRequest) {
+        if (usernameExists(userRequest.getUsername()))
+            throw new InvalidUserInfoException(
+                    String.format("Username: %s, already exists!", userRequest.getUsername())
+            );
 
-        user.setPassword(hashPassword(user.getPassword()));
+        userRequest.setPassword(hashPassword(userRequest.getPassword()));
 
-        return user;
+        return userRequest;
     }
 
     private boolean usernameExists(String username) {
         return userRepository.findByUsername(username).isPresent();
     }
 
-    public User prepareUserForUpdate(Long existingId, User user) {
-        if (isUsernameChanged(existingId, user.getUsername()) && usernameExists(user.getUsername()))
-            throw new InvalidUserInfoException(String.format("Username: %s, already exists!", user.getUsername()));
+    public User prepareUserForUpdate(Long existingId, User userRequest) {
+        if (userNotFound(existingId))
+            throw new UserNotFoundException(String.format("User with id: %d not found!", existingId));
 
-        if (isPasswordPlain(user.getPassword()))
-            user.setPassword(hashPassword(user.getPassword()));
+        if (usernameChanged(existingId, userRequest.getUsername()) && usernameExists(userRequest.getUsername()))
+            throw new InvalidUserInfoException(
+                    String.format("Username: %s, already exists!", userRequest.getUsername())
+            );
 
-        user.setId(existingId);
+        if (isPasswordPlain(userRequest.getPassword()))
+            userRequest.setPassword(hashPassword(userRequest.getPassword()));
 
-        return user;
+        userRequest.setId(existingId);
+
+        return userRequest;
     }
 
-    private boolean isUsernameChanged(Long existingId, String newUsername) {
+    private boolean usernameChanged(Long existingId, String newUsername) {
         return !userRepository.findById(existingId)
-                .orElseThrow(() -> new UserNotFoundException(String.format("User with id: %d not found!", existingId)))
+                .orElseThrow(IllegalStateException::new)
                 .getUsername().equals(newUsername);
     }
 
