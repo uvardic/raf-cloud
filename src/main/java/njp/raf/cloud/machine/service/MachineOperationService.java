@@ -47,8 +47,8 @@ public class MachineOperationService {
     @Async
     @SneakyThrows
     public void start(Long existingId) {
-        if (machineRunning(existingId))
-            throw new InvalidMachineStateException("Machine is already running!");
+        if (machineNotStopped(existingId))
+            throw new InvalidMachineStateException("Machine needs to be stopped first!");
 
         Lock lock = lockRegistry.obtain(Long.toString(existingId));
 
@@ -65,8 +65,8 @@ public class MachineOperationService {
     @Async
     @SneakyThrows
     public void stop(Long existingId) {
-        if (machineStopped(existingId))
-            throw new InvalidMachineStateException("Machine is already stopped!");
+        if (machineNotRunning(existingId))
+            throw new InvalidMachineStateException("Machine needs to be running first!");
 
         Lock lock = lockRegistry.obtain(Long.toString(existingId));
 
@@ -80,17 +80,39 @@ public class MachineOperationService {
         } else throw new MachineOperationInProgressException("Another machine operation in progress!");
     }
 
+    @Async
+    @SneakyThrows
+    public void restart(Long existingId) {
+        if (machineNotRunning(existingId))
+            throw new InvalidMachineStateException("Machine needs to be running first!");
+
+        Lock lock = lockRegistry.obtain(Long.toString(existingId));
+
+        if (lockAcquired(lock)) {
+            try {
+                long operationTime = calculateMachineOperationTime();
+
+                Thread.sleep(operationTime / 2);
+                machineRepository.updateStatus(existingId, MachineStatus.STOPPED);
+                Thread.sleep(operationTime / 2);
+                machineRepository.updateStatus(existingId, MachineStatus.RUNNING);
+            } finally {
+                lock.unlock();
+            }
+        } else throw new MachineOperationInProgressException("Another machine operation in progress!");
+    }
+
     @SneakyThrows
     private boolean lockAcquired(Lock lock) {
         return lock.tryLock(LOCK_TRY_TIMEOUT, TimeUnit.MICROSECONDS);
     }
 
-    private boolean machineRunning(Long existingId) {
-        return findMachine(existingId).getStatus().equals(MachineStatus.RUNNING);
+    private boolean machineNotRunning(Long existingId) {
+        return !findMachine(existingId).getStatus().equals(MachineStatus.RUNNING);
     }
 
-    private boolean machineStopped(Long existingId) {
-        return findMachine(existingId).getStatus().equals(MachineStatus.STOPPED);
+    private boolean machineNotStopped(Long existingId) {
+        return !findMachine(existingId).getStatus().equals(MachineStatus.STOPPED);
     }
 
     private Machine findMachine(Long existingId) {
