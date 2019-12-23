@@ -1,5 +1,6 @@
 package njp.raf.cloud.user.service;
 
+import lombok.RequiredArgsConstructor;
 import njp.raf.cloud.exception.user.UserAuthenticationException;
 import njp.raf.cloud.exception.user.UserNotFoundException;
 import njp.raf.cloud.user.domain.TokenRequest;
@@ -13,6 +14,7 @@ import javax.transaction.Transactional;
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class UserService {
 
     private final UserRepository userRepository;
@@ -20,14 +22,6 @@ public class UserService {
     private final UserPreparationService userPreparationService;
 
     private final TokenService tokenService;
-
-    public UserService(
-            UserRepository userRepository, UserPreparationService userPreparationService, TokenService tokenService
-    ) {
-        this.userRepository = userRepository;
-        this.userPreparationService = userPreparationService;
-        this.tokenService = tokenService;
-    }
 
     @Transactional
     public void deleteById(Long existingId) {

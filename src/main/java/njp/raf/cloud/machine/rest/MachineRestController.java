@@ -2,7 +2,7 @@ package njp.raf.cloud.machine.rest;
 
 import njp.raf.cloud.annotation.AuthorizationRole;
 import njp.raf.cloud.machine.domain.Machine;
-import njp.raf.cloud.machine.domain.MachineSearchRequest;
+import njp.raf.cloud.machine.dto.MachineSearchRequest;
 import njp.raf.cloud.machine.service.MachineService;
 import njp.raf.cloud.user.domain.UserRole;
 import org.springframework.http.HttpStatus;

@@ -1,5 +1,6 @@
 package njp.raf.cloud.user.rest;
 
+import lombok.RequiredArgsConstructor;
 import njp.raf.cloud.annotation.AuthorizationRole;
 import njp.raf.cloud.user.domain.TokenRequest;
 import njp.raf.cloud.user.domain.User;
@@ -13,15 +14,12 @@ import javax.validation.Valid;
 import java.util.List;
 
 @RestController
+@RequiredArgsConstructor
 @SuppressWarnings("unused")
 @RequestMapping("/cloud/user")
 public class UserRestController {
 
     private final UserService userService;
-
-    public UserRestController(UserService userService) {
-        this.userService = userService;
-    }
 
     @DeleteMapping("/delete/existingId={existingId}")
     @AuthorizationRole(roles = {UserRole.ADMIN, UserRole.USER})

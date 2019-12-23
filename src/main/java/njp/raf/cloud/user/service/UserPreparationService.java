@@ -1,5 +1,6 @@
 package njp.raf.cloud.user.service;
 
+import lombok.RequiredArgsConstructor;
 import njp.raf.cloud.exception.user.InvalidUserInfoException;
 import njp.raf.cloud.exception.user.UserNotFoundException;
 import njp.raf.cloud.user.domain.User;
@@ -10,15 +11,12 @@ import org.springframework.stereotype.Service;
 import java.util.regex.Pattern;
 
 @Service
+@RequiredArgsConstructor
 class UserPreparationService {
 
     private static final Pattern BCRYPT_PATTERN = Pattern.compile("^\\$2[ayb]\\$.{56}$");
 
     private final UserRepository userRepository;
-
-    UserPreparationService(UserRepository userRepository) {
-        this.userRepository = userRepository;
-    }
 
     public Long prepareUserForDelete(Long id) {
         if (userNotFound(id))

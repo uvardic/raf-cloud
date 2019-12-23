@@ -1,6 +1,8 @@
-package njp.raf.cloud.machine.domain;
+package njp.raf.cloud.machine.dto;
 
 import lombok.Data;
+import njp.raf.cloud.machine.domain.Machine;
+import njp.raf.cloud.machine.domain.MachineStatus;
 
 import javax.validation.constraints.NotNull;
 import java.text.ParseException;

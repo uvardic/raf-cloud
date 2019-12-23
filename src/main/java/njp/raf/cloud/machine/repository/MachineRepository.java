@@ -3,9 +3,11 @@ package njp.raf.cloud.machine.repository;
 import njp.raf.cloud.machine.domain.Machine;
 import njp.raf.cloud.machine.domain.MachineStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import javax.transaction.Transactional;
 import javax.validation.constraints.NotNull;
 import java.util.Collection;
 import java.util.Date;
@@ -14,6 +16,11 @@ import java.util.Optional;
 
 @Repository
 public interface MachineRepository extends JpaRepository<Machine, Long> {
+
+    @Modifying
+    @Transactional
+    @Query(value = "UPDATE Machine SET status = :statusRequest WHERE id = :existingId")
+    void updateStatus(Long existingId, MachineStatus statusRequest);
 
     Optional<Machine> findByUuid(String uid);
 
