@@ -2,8 +2,8 @@ package njp.raf.cloud.machine.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
-import njp.raf.cloud.exception.async.InvalidMachineStateException;
-import njp.raf.cloud.exception.async.MachineOperationInProgressException;
+import njp.raf.cloud.exception.async.InvalidMachineStateAsyncException;
+import njp.raf.cloud.exception.async.MachineOperationInProgressAsyncException;
 import njp.raf.cloud.exception.machine.MachineNotFoundException;
 import njp.raf.cloud.machine.domain.Machine;
 import njp.raf.cloud.machine.domain.MachineStatus;
@@ -41,14 +41,17 @@ public class MachineOperationService {
             } finally {
                 lock.unlock();
             }
-        } else throw new MachineOperationInProgressException("Another machine operation in progress!");
+        } else throw new MachineOperationInProgressAsyncException("Another machine operation in progress!");
     }
 
     @Async
     @SneakyThrows
     public void start(Long existingId) {
+        if (machineNotActive(existingId))
+            throw new InvalidMachineStateAsyncException("Machine needs to be active!");
+
         if (machineNotStopped(existingId))
-            throw new InvalidMachineStateException("Machine needs to be stopped first!");
+            throw new InvalidMachineStateAsyncException("Machine needs to be stopped first!");
 
         Lock lock = lockRegistry.obtain(Long.toString(existingId));
 
@@ -59,14 +62,17 @@ public class MachineOperationService {
             } finally {
                 lock.unlock();
             }
-        } else throw new MachineOperationInProgressException("Another machine operation in progress!");
+        } else throw new MachineOperationInProgressAsyncException("Another machine operation in progress!");
     }
 
     @Async
     @SneakyThrows
     public void stop(Long existingId) {
+        if (machineNotActive(existingId))
+            throw new InvalidMachineStateAsyncException("Machine needs to be active!");
+
         if (machineNotRunning(existingId))
-            throw new InvalidMachineStateException("Machine needs to be running first!");
+            throw new InvalidMachineStateAsyncException("Machine needs to be running first!");
 
         Lock lock = lockRegistry.obtain(Long.toString(existingId));
 
@@ -77,14 +83,17 @@ public class MachineOperationService {
             } finally {
                 lock.unlock();
             }
-        } else throw new MachineOperationInProgressException("Another machine operation in progress!");
+        } else throw new MachineOperationInProgressAsyncException("Another machine operation in progress!");
     }
 
     @Async
     @SneakyThrows
     public void restart(Long existingId) {
+        if (machineNotActive(existingId))
+            throw new InvalidMachineStateAsyncException("Machine needs to be active!");
+
         if (machineNotRunning(existingId))
-            throw new InvalidMachineStateException("Machine needs to be running first!");
+            throw new InvalidMachineStateAsyncException("Machine needs to be running first!");
 
         Lock lock = lockRegistry.obtain(Long.toString(existingId));
 
@@ -99,7 +108,7 @@ public class MachineOperationService {
             } finally {
                 lock.unlock();
             }
-        } else throw new MachineOperationInProgressException("Another machine operation in progress!");
+        } else throw new MachineOperationInProgressAsyncException("Another machine operation in progress!");
     }
 
     @SneakyThrows
@@ -113,6 +122,10 @@ public class MachineOperationService {
 
     private boolean machineNotStopped(Long existingId) {
         return !findMachine(existingId).getStatus().equals(MachineStatus.STOPPED);
+    }
+
+    private boolean machineNotActive(Long existingId) {
+        return !findMachine(existingId).isActive();
     }
 
     private Machine findMachine(Long existingId) {

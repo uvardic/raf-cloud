@@ -1,4 +1,4 @@
-package njp.raf.cloud.exception.async;
+package njp.raf.cloud.exception.machine;
 
 public class InvalidMachineStateException extends RuntimeException {
 

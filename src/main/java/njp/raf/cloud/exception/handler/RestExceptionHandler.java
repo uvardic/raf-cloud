@@ -2,6 +2,7 @@ package njp.raf.cloud.exception.handler;
 
 import njp.raf.cloud.exception.machine.InvalidMachineInfoException;
 import njp.raf.cloud.exception.machine.InvalidMachineSearchRequestException;
+import njp.raf.cloud.exception.machine.InvalidMachineStateException;
 import njp.raf.cloud.exception.machine.MachineNotFoundException;
 import njp.raf.cloud.exception.user.*;
 import org.springframework.http.HttpStatus;
@@ -21,6 +22,11 @@ public class RestExceptionHandler {
     public ResponseEntity<ExceptionResponse> handleInvalidMachineSearchRequestException(
             InvalidMachineSearchRequestException ex
     ) {
+        return new ResponseEntity<>(new ExceptionResponse(ex), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(value = {InvalidMachineStateException.class})
+    public ResponseEntity<ExceptionResponse> handleInvalidMachineStateException(InvalidMachineStateException ex) {
         return new ResponseEntity<>(new ExceptionResponse(ex), HttpStatus.BAD_REQUEST);
     }
 

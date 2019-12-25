@@ -2,6 +2,7 @@ package njp.raf.cloud.machine.service;
 
 import lombok.RequiredArgsConstructor;
 import njp.raf.cloud.exception.machine.InvalidMachineSearchRequestException;
+import njp.raf.cloud.exception.machine.InvalidMachineStateException;
 import njp.raf.cloud.exception.machine.MachineNotFoundException;
 import njp.raf.cloud.exception.user.UserNotFoundException;
 import njp.raf.cloud.machine.domain.Machine;
@@ -28,10 +29,20 @@ public class MachineService {
     public void deleteById(Long existingId) {
         Machine machine = findById(existingId);
 
+        if (!machine.isActive())
+            throw new InvalidMachineStateException("Machine needs to be active!");
+
+        if (machineRunning(machine))
+            throw new InvalidMachineStateException("Machine needs to be stopped first!");
+
         machine.setActive(false);
         machine.setDateToToCurrentDate();
 
         machineRepository.save(machine);
+    }
+
+    private boolean machineRunning(Machine machine) {
+        return machine.getStatus().equals(MachineStatus.RUNNING);
     }
 
     @Transactional

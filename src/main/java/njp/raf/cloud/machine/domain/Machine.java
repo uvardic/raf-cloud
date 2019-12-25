@@ -32,7 +32,6 @@ public class Machine implements Serializable {
     @Column(nullable = false)
     private String name;
 
-    @NotNull
     @Enumerated(EnumType.STRING)
     private MachineStatus status;
 

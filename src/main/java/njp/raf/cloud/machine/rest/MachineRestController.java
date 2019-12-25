@@ -65,7 +65,7 @@ public class MachineRestController {
         return new ResponseEntity<>(machineService.findAll(), HttpStatus.OK);
     }
 
-    @GetMapping("/allByOwner")
+    @PutMapping("/allByOwner")
     @AuthorizationRole(roles = {UserRole.ADMIN, UserRole.USER})
     public ResponseEntity<List<Machine>> findAllByOwner(
             @RequestBody MachineSearchRequest machineSearchRequest,
@@ -74,7 +74,7 @@ public class MachineRestController {
         return new ResponseEntity<>(machineService.findAllByOwner(machineSearchRequest), HttpStatus.OK);
     }
 
-    @GetMapping("/allByOwnerAndName")
+    @PutMapping("/allByOwnerAndName")
     @AuthorizationRole(roles = {UserRole.ADMIN, UserRole.USER})
     public ResponseEntity<List<Machine>> findAllByOwnerAndName(
             @RequestBody MachineSearchRequest machineSearchRequest,
@@ -83,7 +83,7 @@ public class MachineRestController {
         return new ResponseEntity<>(machineService.findAllByOwnerAndName(machineSearchRequest), HttpStatus.OK);
     }
 
-    @GetMapping("/allByOwnerAndStatusIn")
+    @PutMapping("/allByOwnerAndStatusIn")
     @AuthorizationRole(roles = {UserRole.ADMIN, UserRole.USER})
     public ResponseEntity<List<Machine>> findAllByOwnerAndStatusIn(
             @RequestBody MachineSearchRequest machineSearchRequest,
@@ -92,7 +92,7 @@ public class MachineRestController {
         return new ResponseEntity<>(machineService.findAllByOwnerAndStatusIn(machineSearchRequest), HttpStatus.OK);
     }
 
-    @GetMapping("/allByOwnerAndBetweenDate")
+    @PutMapping("/allByOwnerAndBetweenDate")
     @AuthorizationRole(roles = {UserRole.ADMIN, UserRole.USER})
     public ResponseEntity<List<Machine>> findAllByOwnerAndBetweenDate(
             @RequestBody MachineSearchRequest machineSearchRequest,

@@ -1,6 +1,7 @@
 package njp.raf.cloud.user.service;
 
 import lombok.RequiredArgsConstructor;
+import njp.raf.cloud.exception.user.InvalidUserInfoException;
 import njp.raf.cloud.exception.user.UserAuthenticationException;
 import njp.raf.cloud.exception.user.UserNotFoundException;
 import njp.raf.cloud.user.domain.TokenRequest;
@@ -12,30 +13,76 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.util.List;
+import java.util.regex.Pattern;
 
 @Service
 @RequiredArgsConstructor
 public class UserService {
 
-    private final UserRepository userRepository;
+    private static final Pattern BCRYPT_PATTERN = Pattern.compile("^\\$2[ayb]\\$.{56}$");
 
-    private final UserPreparationService userPreparationService;
+    private final UserRepository userRepository;
 
     private final TokenService tokenService;
 
     @Transactional
     public void deleteById(Long existingId) {
-        userRepository.deleteById(userPreparationService.prepareUserForDelete(existingId));
+        if (userNotFound(existingId))
+            throw new UserNotFoundException(String.format("User with id: %d not found!", existingId));
+
+        userRepository.deleteById(existingId);
+    }
+
+    private boolean userNotFound(Long id) {
+        return userRepository.findById(id).isEmpty();
     }
 
     @Transactional
     public User save(User userRequest) {
-        return userRepository.save(userPreparationService.prepareUserForSave(userRequest));
+        if (usernameExists(userRequest.getUsername()))
+            throw new InvalidUserInfoException(
+                    String.format("Username: %s, already exists!", userRequest.getUsername())
+            );
+
+        userRequest.setPassword(hashPassword(userRequest.getPassword()));
+
+        return userRepository.save(userRequest);
+    }
+
+    private boolean usernameExists(String username) {
+        return userRepository.findByUsername(username).isPresent();
+    }
+
+    private String hashPassword(String plainText) {
+        return BCrypt.hashpw(plainText, BCrypt.gensalt());
     }
 
     @Transactional
     public User update(Long existingId, User userRequest) {
-        return userRepository.save(userPreparationService.prepareUserForUpdate(existingId, userRequest));
+        if (userNotFound(existingId))
+            throw new UserNotFoundException(String.format("User with id: %d not found!", existingId));
+
+        if (usernameChanged(existingId, userRequest.getUsername()) && usernameExists(userRequest.getUsername()))
+            throw new InvalidUserInfoException(
+                    String.format("Username: %s, already exists!", userRequest.getUsername())
+            );
+
+        if (isPasswordPlain(userRequest.getPassword()))
+            userRequest.setPassword(hashPassword(userRequest.getPassword()));
+
+        userRequest.setId(existingId);
+
+        return userRepository.save(userRequest);
+    }
+
+    private boolean usernameChanged(Long existingId, String newUsername) {
+        return !userRepository.findById(existingId)
+                .orElseThrow(IllegalStateException::new)
+                .getUsername().equals(newUsername);
+    }
+
+    private boolean isPasswordPlain(String password) {
+        return !BCRYPT_PATTERN.matcher(password).matches();
     }
 
     public User findById(Long id) {
