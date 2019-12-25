@@ -2,9 +2,9 @@ package njp.raf.cloud.user.rest;
 
 import lombok.RequiredArgsConstructor;
 import njp.raf.cloud.annotation.AuthorizationRole;
-import njp.raf.cloud.user.domain.TokenRequest;
 import njp.raf.cloud.user.domain.User;
 import njp.raf.cloud.user.domain.UserRole;
+import njp.raf.cloud.user.dto.TokenRequest;
 import njp.raf.cloud.user.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
