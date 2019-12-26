@@ -1,4 +1,4 @@
-package njp.raf.cloud.exception.handler;
+package njp.raf.cloud.exception.advice;
 
 import lombok.Getter;
 

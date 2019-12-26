@@ -1,4 +1,4 @@
-package njp.raf.cloud.exception.handler;
+package njp.raf.cloud.exception.advice;
 
 import njp.raf.cloud.exception.machine.InvalidMachineInfoException;
 import njp.raf.cloud.exception.machine.InvalidMachineSearchRequestException;
